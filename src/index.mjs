@@ -14,7 +14,11 @@ app.get('/api/users' , (request , response)=>{
     ])
 })
 
-app.get('/api/producrs')
+app.get('/api/products' , (request , response)=>{
+    response.send([
+        {id : 123 , name : "Vada Pav" , price : 10}
+    ])
+})
 
 app.listen(PORT , ()=>{
     console.log(`Running on ${PORT}`)
