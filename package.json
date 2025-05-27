@@ -1,11 +1,16 @@
 {
   "name": "express",
   "version": "1.0.0",
-  "main": "index.mjs",
+  "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:dev" : "nodemon ./src/index.mjs",
-    "start" : "node ./src/index.mjs"
+    "start:dev" : "nodemon ./src/index.js",
+    "start" : "node ./src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com-sharmanabin:Nabin-09/Express.git"
   },
   "keywords": [],
   "author": "",
@@ -16,7 +21,5 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
-  },
-  "type" : "module"
-
+  }
 }
