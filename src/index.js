@@ -8,7 +8,18 @@ const loggingMiddleware = (request  , response , next)=>{
     next();
 }
 
-app.use(loggingMiddleware);
+// app.use(loggingMiddleware); this middlware will be used on every route
+
+const handleUserById = (request , response , next) =>{
+    const {
+        body , 
+        params:{id},
+    } = request;
+    const parsedId = parseInt(id);
+    if(isNaN(parsedId)) return response.sendStatus(400);
+    const findUserIndex = mockUsers.findUserIndex((user)=>{ user.id === parsedId});
+    if(findUserIndex === -1) return response.sendStatus(404);
+};
 
 
 
