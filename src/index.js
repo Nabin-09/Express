@@ -100,6 +100,22 @@ app.get('/api/products', (request, response) => {
     ]);
 });
 
+app.patch('/api/users/:id' , (request , response) => {
+    const {
+        body , 
+        params : {id}
+    } = request;
+    const parsedID = parseInt(id);
+    if(isNaN(parsedID)) return response.sendStatus(400);
+    const findUserIndex = mockUsers.findIndex((user) => {
+        user.id === parsedID
+    })
+    if(findUserIndex === -1) return response.sendStatus(404);
+    mockUsers[findUserIndex] = {...mockUsers[findUserIndex] , ...body}
+    return response.sendStatus(200);
+})
+
+
 // PUT request — replaces the whole user record
 // ✅ Put request edits the whole record,
 // ✅ Patch updates it partially,
