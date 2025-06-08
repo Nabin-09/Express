@@ -1,5 +1,6 @@
 import express from 'express';
-import { query, body, validationResult } from 'express-validator';
+import { query, body, validationResult , checkSchema } from 'express-validator';
+import { createUserSchema  } from './validationSchema.js'
 
 const app = express();
 app.use(express.json());
@@ -78,14 +79,14 @@ app.get('/api/users',
 );
 
 // Create a new user
-app.post('/api/users',
-  body('username')
-    .notEmpty().withMessage('Username is required')
-    .isLength({ min: 3, max: 32 }).withMessage('Username must be 3-32 characters long')
-    .isString(),
-  body('displayName')
-    .notEmpty().withMessage('Display Name is required')
-    .isString(),
+app.post('/api/users',checkSchema(createUserSchema),
+//   body('username')
+//     .notEmpty().withMessage('Username is required')
+//     .isLength({ min: 3, max: 32 }).withMessage('Username must be 3-32 characters long')
+//     .isString(),
+//   body('displayName')
+//     .notEmpty().withMessage('Display Name is required')
+//     .isString(),  this is the non conventional way to checkSchema
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
