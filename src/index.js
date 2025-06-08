@@ -1,170 +1,117 @@
 import express from 'express';
-import {query , validationResult} from 'express-validator'
-
+import { query, body, validationResult } from 'express-validator';
 
 const app = express();
 app.use(express.json());
 
-// Middleware for logging all requests
-const loggingMiddleware = (request, response, next) => {
-    console.log(`${request.method} - ${request.url}`);
-    next();
-}
+// ===================== MIDDLEWARE =====================
 
-// app.use(loggingMiddleware); // ✅ this middleware will be used on every route
+// Logs every request to console
+const loggingMiddleware = (req, res, next) => {
+  console.log(`${req.method} - ${req.url}`);
+  next();
+};
 app.use(loggingMiddleware);
 
-// ✅ Middleware to handle user by ID (currently unused)
-const handleUserById = (request, response, next) => {
-    const {
-        body,
-        params: { id },
-    } = request;
+// Middleware to validate and find user by ID
+const handleUserById = (req, res, next) => {
+  const { id } = req.params;
+  const parsedId = parseInt(id);
 
-    const parsedId = parseInt(id);
-    if (isNaN(parsedId)) return response.sendStatus(400); // ❗ If ID is not a number, return 400 Bad Request
+  if (isNaN(parsedId)) return res.status(400).json({ error: 'Invalid ID format' });
 
-    // ❌ FIX: Incorrect method name; use `findIndex`, not `findUserIndex`
-    const findUserIndex = mockUsers.findIndex(user => user.id === parsedId);
-    if (findUserIndex === -1) return response.sendStatus(404); // User not found
+  const findUserIndex = mockUsers.findIndex(user => user.id === parsedId);
+  if (findUserIndex === -1) return res.status(404).json({ error: 'User not found' });
 
-    // If needed later, you can attach found user to request: request.user = mockUsers[findUserIndex];
-    next();
+  req.userIndex = findUserIndex; // Optional: attach index for later use
+  next();
 };
 
-// ✅ Best Practice: Use environment variable for PORT or fallback to 3000
-const PORT = process.env.PORT || 3000;
+// ===================== MOCK DATA =====================
 
-// Home route
-app.get('/', (request, response) => {
-    response.status(201).send({ msg: "Nabin is Batman" });
-});
-
-// GET all users
-app.get('/api/users',query('filter').isString().notEmpty().isLength({min : 3 , max : 15}).
-    withMessage('Must me atleast 3 and maximum 15 characters')
-,  (request, response) => {
-    const result = validationResult(request);
-    console.log(result);
-    response.send(mockUsers);
-});
-
-// ❌ Fix: This should be defined — you forgot to declare `mockUsers`
 const mockUsers = [
-    { id: 1, username: "NabinYou", displayName: "Rizzler" },
-    { id: 2, username: "NitinYou", displayName: "hay" },
-    { id: 3, username: "RishuYou", displayName: "Hizru" },
-    { id: 4, username: "AmitX", displayName: "CodeWizard" },
-    { id: 5, username: "ShreyaZ", displayName: "ByteQueen" }, 
-    { id: 6, username: "KunalDev", displayName: "StackBoss" },
-    { id: 7, username: "Anjali01", displayName: "BugHunter" },
-    { id: 8, username: "RajTheCoder", displayName: "LoopKing" },
-    { id: 9, username: "SimranXD", displayName: "PixelWhiz" },
-    { id: 10, username: "TanishCool", displayName: "NullPointer" },
-    { id: 11, username: "PrernaJS", displayName: "AsyncNinja" },
-    { id: 12, username: "DevilBoy", displayName: "Overclock" },
-    { id: 13, username: "SanyaBee", displayName: "CodeBee" },
-    { id: 14, username: "RahulRX", displayName: "TechStorm" },
-    { id: 15, username: "ZoyaMax", displayName: "CyberCat" }
+  { id: 1, username: "NabinYou", displayName: "Rizzler" },
+  { id: 2, username: "NitinYou", displayName: "hay" },
+  { id: 3, username: "RishuYou", displayName: "Hizru" },
+  { id: 4, username: "AmitX", displayName: "CodeWizard" },
+  { id: 5, username: "ShreyaZ", displayName: "ByteQueen" },
+  { id: 6, username: "KunalDev", displayName: "StackBoss" },
+  { id: 7, username: "Anjali01", displayName: "BugHunter" },
+  { id: 8, username: "RajTheCoder", displayName: "LoopKing" },
+  { id: 9, username: "SimranXD", displayName: "PixelWhiz" },
+  { id: 10, username: "TanishCool", displayName: "NullPointer" },
+  { id: 11, username: "PrernaJS", displayName: "AsyncNinja" },
+  { id: 12, username: "DevilBoy", displayName: "Overclock" },
+  { id: 13, username: "SanyaBee", displayName: "CodeBee" },
+  { id: 14, username: "RahulRX", displayName: "TechStorm" },
+  { id: 15, username: "ZoyaMax", displayName: "CyberCat" }
 ];
 
-// ❌ Fix: Typo in response line: `response / send(200);` → `res.sendStatus(200);`
-app.post('/api/users', (request, response) => {
-    console.log(request.body);
+// ===================== ROUTES =====================
 
-    const { username, displayName } = request.body;
+// Home route
+app.get('/', (req, res) => {
+  res.status(200).json({ msg: "Nabin is Batman" });
+});
 
-    if (!username || !displayName) {
-        return response.status(400).json({ error: 'Missing fields' });
+// Get all users — with optional query param `filter`
+app.get('/api/users',
+  query('filter')
+    .optional()
+    .isString()
+    .isLength({ min: 3, max: 15 })
+    .withMessage('Filter must be 3 to 15 characters long'),
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
+    const filter = req.query.filter;
+    if (filter) {
+      const filteredUsers = mockUsers.filter(user =>
+        user.username.toLowerCase().includes(filter.toLowerCase())
+      );
+      return res.json(filteredUsers);
     }
 
+    res.json(mockUsers);
+  }
+);
+
+// Create a new user
+app.post('/api/users',
+  body('username')
+    .notEmpty().withMessage('Username is required')
+    .isLength({ min: 3, max: 32 }).withMessage('Username must be 3-32 characters long')
+    .isString(),
+  body('displayName')
+    .notEmpty().withMessage('Display Name is required')
+    .isString(),
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
+    const { username, displayName } = req.body;
+
     const newUser = {
-        id: mockUsers[mockUsers.length - 1].id + 1,
-        username,
-        displayName
+      id: mockUsers[mockUsers.length - 1].id + 1,
+      username,
+      displayName
     };
 
     mockUsers.push(newUser);
-    return response.status(201).json(newUser);
+    res.status(201).json(newUser);
+  }
+);
+
+// Get specific user by ID
+app.get('/api/user/:id', handleUserById, (req, res) => {
+  const user = mockUsers[req.userIndex];
+  res.json(user);
 });
 
-// ✅ GET a specific user by ID
-app.get('/api/users/:id', (request, response) => {
-    const userID = parseInt(request.params.id);
-    if (isNaN(userID)) return response.status(400).json({ error: 'Invalid ID' });
+// ===================== SERVER =====================
 
-    const user = mockUsers.find(u => u.id === userID);
-    if (user) return response.json(user);
-
-    return response.status(404).json({ error: 'User not found' });
-});
-
-// Example static product endpoint
-app.get('/api/products', (request, response) => {
-    response.send([
-        { id: 123, name: "Vada Pav", price: 10 }
-    ]);
-});
-
-app.patch('/api/users/:id' , (request , response) => {
-    const {
-        body , 
-        params : {id}
-    } = request;
-    const parsedID = parseInt(id);
-    if(isNaN(parsedID)) return response.sendStatus(400);
-    const findUserIndex = mockUsers.findIndex((user) => {
-        user.id === parsedID
-    })
-    if(findUserIndex === -1) return response.sendStatus(404);
-    mockUsers[findUserIndex] = {...mockUsers[findUserIndex] , ...body}
-    return response.sendStatus(200);
-})
-
-
-//Delete request 
-
-app.delete('/api/users/:id' , (request ,response)=>{
-    const {
-        params : {id}
-    } = request;
-    const parsedID = parseInt(id);
-    if(isNaN(parsedID)) return response.sendStatus(400);
-    const findUserIndex = mockUsers.findIndex((user) => user.id === parsedID )
-    if(findUserIndex === -1) return response.sendStatus(404);
-    mockUsers.splice(findUserIndex , 1 );
-    return response.sendStatus(200);
-})
-
-
-// PUT request — replaces the whole user record
-// ✅ Put request edits the whole record,
-// ✅ Patch updates it partially,
-// ✅ Delete request deletes it
-app.put('/api/users/:id', (request, response) => {
-    const {
-        body,
-        params: { id },
-    } = request;
-
-    const parsedId = parseInt(id);
-    if (isNaN(parsedId)) return response.status(400);
-
-    const findUserIndex = mockUsers.findIndex(
-        (user) => user.id === parsedId
-    );
-
-    if (findUserIndex === -1) return response.sendStatus(404);
-
-    mockUsers[findUserIndex] = {
-        id: parsedId,
-        ...body
-    };
-
-    return response.sendStatus(200);
-});
-
-// Start the server
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Running on ${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
