@@ -49,7 +49,7 @@ const mockUsers = [
     { id: 2, username: "NitinYou", displayName: "hay" },
     { id: 3, username: "RishuYou", displayName: "Hizru" },
     { id: 4, username: "AmitX", displayName: "CodeWizard" },
-    { id: 5, username: "ShreyaZ", displayName: "ByteQueen" },
+    { id: 5, username: "ShreyaZ", displayName: "ByteQueen" }, 
     { id: 6, username: "KunalDev", displayName: "StackBoss" },
     { id: 7, username: "Anjali01", displayName: "BugHunter" },
     { id: 8, username: "RajTheCoder", displayName: "LoopKing" },
@@ -112,6 +112,21 @@ app.patch('/api/users/:id' , (request , response) => {
     })
     if(findUserIndex === -1) return response.sendStatus(404);
     mockUsers[findUserIndex] = {...mockUsers[findUserIndex] , ...body}
+    return response.sendStatus(200);
+})
+
+
+//Delete request 
+
+app.delete('/api/users/:id' , (request ,response)=>{
+    const {
+        params : {id}
+    } = request;
+    const parsedID = parseInt(id);
+    if(isNaN(parsedID)) return response.sendStatus(400);
+    const findUserIndex = mockUsers.findIndex((user) => user.id === parsedID )
+    if(findUserIndex === -1) return response.sendStatus(404);
+    mockUsers.splice(findUserIndex , 1 );
     return response.sendStatus(200);
 })
 
