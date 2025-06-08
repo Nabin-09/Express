@@ -1,4 +1,6 @@
 import express from 'express';
+import {query , validationResult} from 'express-validator'
+
 
 const app = express();
 app.use(express.json());
@@ -39,7 +41,11 @@ app.get('/', (request, response) => {
 });
 
 // GET all users
-app.get('/api/users', (request, response) => {
+app.get('/api/users',query('filter').isString().notEmpty().isLength({min : 3 , max : 15}).
+    withMessage('Must me atleast 3 and maximum 15 characters')
+,  (request, response) => {
+    const result = validationResult(request);
+    console.log(result);
     response.send(mockUsers);
 });
 
