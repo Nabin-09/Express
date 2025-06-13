@@ -1,11 +1,29 @@
 const http = require('http');
 const fs = require('fs');
+const url = require('url')
 
 const myServer = http.createServer((req, res) => {
     const log = `${Date.now()}: ${req.url} New request received\n`;
 
     console.log('New request received');
     // console.log(req.headers); // You can uncomment this to see request headers
+    const myUrl = url.parse(req.url, true);//true enables us to get query params
+    console.log(myUrl);
+    //URL- used - http://localhost:8000/about?myName=Nabin
+    //Url {
+//   protocol: null,
+//   slashes: null,
+//   auth: null,
+//   host: null,
+//   port: null,
+//   hostname: null,
+//   hash: null,
+//   search: '?myName=Nabin',
+//   query: 'myName=Nabin',
+//   pathname: '/about',
+//   path: '/about?myName=Nabin',
+//   href: '/about?myName=Nabin'
+//}
 
     // Append each request log to log.txt file
     fs.appendFile('log.txt', log, (err, data) => {
@@ -27,6 +45,7 @@ const myServer = http.createServer((req, res) => {
             case '/about':
                 res.end('I am Nabin Sharma');
                 break;
+            
             default:
                 res.statusCode = 404;
                 res.end('404 not found');
