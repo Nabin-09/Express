@@ -11,3 +11,6 @@ fs.readFile("./contacts.txt" , "utf-8" , (err , result)=>{ //this does not retur
     if(err) console.log("Error" , err); 
     else console.log(result);
 })
+
+
+fs.appendFileSync("./test.txt" , new Date().getDate().toLocaleString() ,);
