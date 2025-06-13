@@ -38,12 +38,13 @@ const myServer = http.createServer((req, res) => {
         }
 
         // Handle routes
-        switch (req.url) {
+        switch (myUrl.pathname) {
             case '/':
                 res.end('Homepage');
                 break;
             case '/about':
-                res.end('I am Nabin Sharma');
+                const username = myUrl.query.myname;
+                res.end(`Hi , ${username}`);
                 break;
             
             default:
