@@ -48,7 +48,7 @@ const myServer = http.createServer((req, res) => {
     }
     */
 
-    // Removed: res.end("Hello from server"); — it would cause duplicate response error if uncommented
+    
 });
 
 myServer.listen(8000, () => {
