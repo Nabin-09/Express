@@ -1,0 +1,15 @@
+{
+  "name": "basicserver",
+  "version": "1.0.0",
+  "description": "Learning details about URLs",
+  "license": "ISC",
+  "author": "Nabin Sharma",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "url": "^0.11.4"
+  }
+}
