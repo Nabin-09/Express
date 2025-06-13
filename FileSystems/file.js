@@ -14,3 +14,9 @@ fs.readFile("./contacts.txt" , "utf-8" , (err , result)=>{ //this does not retur
 
 
 fs.appendFileSync("./test.txt" , new Date().getDate().toLocaleString() ,);
+fs.appendFile("./test.txt" , new Date().getDate().toLocaleString(), (err , res)=>{
+    if(err) console.log("ERROR :", err);
+    else console.log(res);
+})
+
+//we can use unlinkSync to delete files , statSync to get details of files and many many more functions to read files 
