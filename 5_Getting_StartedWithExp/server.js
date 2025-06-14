@@ -7,7 +7,7 @@ app.get('/' , (req, res)=>{
     return res.send('Hello from home page')
 })
 app.get('/about' , (req , res)=>{
-    return res.send('Hello from ABOOOUT page')
+    return res.send('Hello from ABOOOUT page'+' Hey '+ req.query.name)
 })
 
 const myServer = http.createServer(app)
