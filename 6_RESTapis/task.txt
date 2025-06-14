@@ -1,6 +1,7 @@
 REST API- JSON
 
-GET /users - List all users
+GET /api/users - List all users (in JSON)
+GET /users - HTML redering for phone users.
 GET /users/1 - Get user with ID 1 
 GET /users/2 - GEt user wiht ID 2
 
