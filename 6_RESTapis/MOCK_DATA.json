@@ -7998,5 +7998,13 @@
     "email": "ckrinkrr@utexas.edu",
     "gender": "Female",
     "job_title": "Senior Cost Accountant"
+  },
+  {
+    "first_name": "Nabin",
+    "last_name": "Sharma",
+    "email": "nabin@example.com",
+    "gender": "male",
+    "job_title": "Developer",
+    "id": 1001
   }
 ]
