@@ -28,6 +28,35 @@ app.get("/api/users/:id" , (req , res)=>{
 })
 
 
+//POST
+
+app.post('/api/users' , (req , res)=>{
+    //TODO : Create a new user 
+    return res.json({status : "Pending"})
+})
+
+app.patch('/api/users/:id' , (req , res)=>{
+    //Update a user
+    return res.json({status : "Pending"})
+})
+
+
+app.delete('/api/users/:id' , (req , res)=>{
+    //Delete a user
+    return res.json({status : "Pending"})
+})
+
+/*
+When we have common routes we can also do 
+app.route('/api/users/:id)
+    .get((req , res)=>{
+        })
+    .post((req , res)=>{
+        })
+    .delete((req , res)=>{
+        })
+*/
+
 app.listen(PORT , ()=>{
     console.log(`Server running in ${PORT}`);
 })
