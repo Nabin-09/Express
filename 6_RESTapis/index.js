@@ -40,13 +40,13 @@ app.post('/api/users' , (req , res)=>{
     console.log("Body" , body);
     users.push({...body , id : users.length+1}); 
     fs.writeFile('./MOCK_DATA.json' , JSON.stringify(users) , (err , data)=>{
-        return res.json({status : "pending"})
+         return res.json({status : "Success" , id : users.length});
     })
 })
 
 app.patch('/api/users/:id' , (req , res)=>{
     //Update a user
-    return res.json({status : "Pending"})
+    return res.json({status : "Success" , id : users.length});
 })
 
 
