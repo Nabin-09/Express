@@ -2,25 +2,20 @@ const express = require('express')
 require('dotenv').config()
 const { connectToMongoDB } = require("./connect")
 const urlRoute = require('./routes/url')
+const path = require('path')
 const URL = require('./models/url')
 
 const app = express();
 
 app.use(express.json())
 app.set('view engine', 'ejs');
+app.set('views' , path.resolve('./views'))
 
 app.get('/test',async (req , res)=>{
     const allUrls = await URL.find({});
-    return res.end(`
-    <html>
-        <head></head>
-        <body>
-            <ol>
-            ${allUrls.map(url => `<li>${url.shortId} - ${url.redirectURL} - ${url.visitHistory.length}</li>`).join('')}
-            </ol>
-        </body>
-    `)
-    return res.send('<h1> Hey from the Server </h1>')
+    return res.render('home',{
+        urls : allUrls,
+    });
 })
 
 
