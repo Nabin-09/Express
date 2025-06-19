@@ -7,8 +7,19 @@ const URL = require('./models/url')
 const app = express();
 
 app.use(express.json())
+app.set('view engine', 'ejs');
 
-app.get('/test', (req , res)=>{
+app.get('/test',async (req , res)=>{
+    const allUrls = await URL.find({});
+    return res.end(`
+    <html>
+        <head></head>
+        <body>
+            <ol>
+            ${allUrls.map(url => `<li>${url.shortId} - ${url.redirectURL} - ${url.visitHistory.length}</li>`).join('')}
+            </ol>
+        </body>
+    `)
     return res.send('<h1> Hey from the Server </h1>')
 })
 
@@ -19,7 +30,7 @@ connectToMongoDB(process.env.MONGO_URI).then(()=>{
     console.log(`DB connected`)
 })
 
-app.get('/:shortId', async (req , res)=>{
+app.get('/url/:shortId', async (req , res)=>{
      const shortId = req.params.shortId;
     const entry = await URL.findOneAndUpdate(
         {
