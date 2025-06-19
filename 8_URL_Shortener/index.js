@@ -8,6 +8,10 @@ const app = express();
 
 app.use(express.json())
 
+app.get('/test', (req , res)=>{
+    return res.send('<h1> Hey from the Server </h1>')
+})
+
 
 
 app.use("/url" , urlRoute);
