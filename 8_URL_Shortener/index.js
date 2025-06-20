@@ -21,7 +21,7 @@ connectToMongoDB(process.env.MONGO_URI).then(()=>{
     console.log(`DB connected`)
 })
 
-app.use('/' , staticRouter)
+app.use('/' , staticRouter) 
 
 app.get('/url/:shortId', async (req , res)=>{
      const shortId = req.params.shortId;
